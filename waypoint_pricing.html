@@ -1,0 +1,160 @@
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.pr-wrap{background:#080808;padding:60px 40px 48px;font-family:'DM Sans',system-ui,sans-serif;min-height:600px}
+.mono{font-family:'DM Mono',monospace,sans-serif}
+.serif{font-family:'Cormorant Garamond','Georgia',serif}
+.pr-head{text-align:center;margin-bottom:52px}
+.pr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.06)}
+.pr-card{background:#0a0a0a;padding:28px 24px 32px;display:flex;flex-direction:column;gap:0;position:relative;transition:background .25s}
+.pr-card:hover{background:#0e0e0e}
+.pr-card.featured{background:#0d0d0a;border:1px solid rgba(200,169,110,.25)}
+.pr-top-tag{position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:#C8A96E;color:#080808;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;padding:4px 14px;font-family:inherit;font-weight:500;white-space:nowrap}
+.pr-tier{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:16px}
+.pr-card.featured .pr-tier{color:rgba(200,169,110,.7)}
+.pr-price{font-family:'Cormorant Garamond','Georgia',serif;font-size:44px;font-weight:300;color:#fff;line-height:1;margin-bottom:4px}
+.pr-price .cur{font-size:20px;vertical-align:top;margin-top:8px;display:inline-block;color:rgba(255,255,255,.5)}
+.pr-price .per{font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,.28);vertical-align:bottom;margin-bottom:6px;display:inline-block}
+.pr-card.featured .pr-price{color:#C8A96E}
+.pr-desc{font-size:12px;color:rgba(255,255,255,.32);line-height:1.6;margin-bottom:24px;min-height:52px}
+.pr-btn{font-family:inherit;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:13px 20px;width:100%;cursor:pointer;transition:all .2s;margin-bottom:28px}
+.pr-btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.45)}
+.pr-btn.ghost:hover{border-color:rgba(255,255,255,.3);color:#fff}
+.pr-btn.solid{background:#C8A96E;border:1px solid #C8A96E;color:#080808}
+.pr-btn.solid:hover{background:#d4b87c}
+.pr-divider{height:1px;background:rgba(255,255,255,.06);margin-bottom:20px}
+.pr-features{display:flex;flex-direction:column;gap:10px;flex:1}
+.pr-feat{display:flex;align-items:flex-start;gap:10px;font-size:12px;color:rgba(255,255,255,.45);line-height:1.45}
+.pr-feat.on{color:rgba(255,255,255,.7)}
+.pr-feat.on.gold{color:rgba(200,169,110,.9)}
+.feat-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.feat-dot.off{background:rgba(255,255,255,.12)}
+.feat-dot.on{background:rgba(255,255,255,.4)}
+.feat-dot.gold{background:#C8A96E}
+.pr-footer{text-align:center;margin-top:36px}
+.pr-footnote{font-size:11px;color:rgba(255,255,255,.22);margin-bottom:16px}
+.pr-logos{display:flex;justify-content:center;align-items:center;gap:28px;margin-top:20px}
+.pr-logo-item{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.2)}
+.pr-logo-sep{width:1px;height:14px;background:rgba(255,255,255,.08)}
+</style>
+
+<div class="pr-wrap">
+
+  <div class="pr-head">
+    <div class="mono" style="font-size:9px;letter-spacing:3.5px;text-transform:uppercase;color:rgba(200,169,110,.65);margin-bottom:14px">Pricing</div>
+    <div class="serif" style="font-size:46px;font-weight:300;color:#fff;line-height:1.1;margin-bottom:14px">Plan the trip.<br><em style="font-style:italic;color:rgba(200,169,110,.9)">Not the spreadsheet.</em></div>
+    <div style="font-size:13px;color:rgba(255,255,255,.32);max-width:380px;margin:0 auto;line-height:1.7">Start free. Upgrade when your group is ready to get serious.</div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:20px">
+      <div class="mono" style="font-size:10px;color:rgba(255,255,255,.25)">Monthly</div>
+      <div id="tog" onclick="toggleBilling()" style="width:40px;height:22px;background:rgba(200,169,110,.2);border:1px solid rgba(200,169,110,.35);border-radius:11px;position:relative;cursor:pointer;transition:background .3s">
+        <div id="tog-knob" style="position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#C8A96E;transition:left .3s"></div>
+      </div>
+      <div class="mono" style="font-size:10px;color:#C8A96E">Annual <span style="color:rgba(200,169,110,.5)">(save 30%)</span></div>
+    </div>
+  </div>
+
+  <div class="pr-grid">
+
+    <div class="pr-card">
+      <div class="mono pr-tier">Free</div>
+      <div class="pr-price"><span class="cur">$</span>0<span class="per">/mo</span></div>
+      <div class="pr-desc">Plan your first trip. See what Waypoint can do.</div>
+      <button class="pr-btn ghost">Get started free</button>
+      <div class="pr-divider"></div>
+      <div class="pr-features">
+        <div class="pr-feat on"><div class="feat-dot on"></div>1 trip at a time</div>
+        <div class="pr-feat on"><div class="feat-dot on"></div>Full AI itinerary builder</div>
+        <div class="pr-feat on"><div class="feat-dot on"></div>Affiliate booking links</div>
+        <div class="pr-feat on"><div class="feat-dot on"></div>2 AI regenerations</div>
+        <div class="pr-feat on"><div class="feat-dot on"></div>Unlimited members</div>
+        <div class="pr-feat"><div class="feat-dot off"></div>No collaboration tools</div>
+        <div class="pr-feat"><div class="feat-dot off"></div>No exports</div>
+        <div class="pr-feat"><div class="feat-dot off"></div>No budget estimator</div>
+      </div>
+    </div>
+
+    <div class="pr-card">
+      <div class="mono pr-tier">Pay per trip</div>
+      <div class="pr-price"><span class="cur">$</span><span id="ppt">12</span><span class="per">/trip</span></div>
+      <div class="pr-desc">Unlock everything for one trip. Perfect for occasional travellers.</div>
+      <button class="pr-btn ghost">Buy a trip</button>
+      <div class="pr-divider"></div>
+      <div class="pr-features">
+        <div class="pr-feat on"><div class="feat-dot on"></div>All free features</div>
+        <div class="pr-feat on"><div class="feat-dot on"></div>Unlimited regenerations</div>
+        <div class="pr-feat on"><div class="feat-dot on"></div>Collaboration tools</div>
+        <div class="pr-feat on"><div class="feat-dot on"></div>Group voting & polls</div>
+        <div class="pr-feat on"><div class="feat-dot on"></div>Budget estimator</div>
+        <div class="pr-feat on"><div class="feat-dot on"></div>PDF & Word export</div>
+        <div class="pr-feat on"><div class="feat-dot on"></div>Calendar sync</div>
+        <div class="pr-feat"><div class="feat-dot off"></div>Captain tools</div>
+      </div>
+    </div>
+
+    <div class="pr-card featured">
+      <div class="pr-top-tag">Most popular</div>
+      <div class="mono pr-tier">Monthly</div>
+      <div class="pr-price"><span class="cur" style="color:rgba(200,169,110,.5)">$</span><span id="mo-price">18</span><span class="per">/mo</span></div>
+      <div class="pr-desc" style="color:rgba(255,255,255,.4)">Unlimited trips. Full features. Cancel anytime.</div>
+      <button class="pr-btn solid">Start monthly plan</button>
+      <div class="pr-divider" style="background:rgba(200,169,110,.1)"></div>
+      <div class="pr-features">
+        <div class="pr-feat on gold"><div class="feat-dot gold"></div>Unlimited trips</div>
+        <div class="pr-feat on gold"><div class="feat-dot gold"></div>All pay-per-trip features</div>
+        <div class="pr-feat on gold"><div class="feat-dot gold"></div>Captain tools</div>
+        <div class="pr-feat on gold"><div class="feat-dot gold"></div>Priority AI generation</div>
+        <div class="pr-feat on gold"><div class="feat-dot gold"></div>Shareable read-only links</div>
+        <div class="pr-feat on gold"><div class="feat-dot gold"></div>Early feature access</div>
+        <div class="pr-feat on gold"><div class="feat-dot gold"></div>Full budget estimator</div>
+        <div class="pr-feat on gold"><div class="feat-dot gold"></div>All calendar exports</div>
+      </div>
+    </div>
+
+    <div class="pr-card">
+      <div class="mono pr-tier">Annual</div>
+      <div class="pr-price"><span class="cur">$</span><span id="an-price">13</span><span class="per">/mo</span></div>
+      <div class="pr-desc">Everything in monthly. Best value. Billed yearly.</div>
+      <button class="pr-btn ghost" style="border-color:rgba(200,169,110,.25);color:rgba(200,169,110,.7)">Start annual plan</button>
+      <div class="pr-divider"></div>
+      <div class="pr-features">
+        <div class="pr-feat on"><div class="feat-dot on"></div>Everything in Monthly</div>
+        <div class="pr-feat on"><div class="feat-dot on"></div>30% cheaper per month</div>
+        <div class="pr-feat on"><div class="feat-dot on"></div>Concierge onboarding</div>
+        <div class="pr-feat on"><div class="feat-dot on"></div>Dedicated support</div>
+        <div class="pr-feat on"><div class="feat-dot on"></div>Trip archive access</div>
+        <div class="pr-feat on"><div class="feat-dot on"></div>Allianz insurance links</div>
+        <div class="pr-feat" style="color:rgba(255,255,255,.2)"><div class="feat-dot off"></div>Billed $<span id="annual-total">156</span>/year</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="pr-footer">
+    <div class="pr-footnote">All plans include Booking.com, Viator & Allianz affiliate links on every card — free tier included.</div>
+    <div class="pr-logos">
+      <div class="pr-logo-item">Stripe</div>
+      <div class="pr-logo-sep"></div>
+      <div class="pr-logo-item">PayPal</div>
+      <div class="pr-logo-sep"></div>
+      <div class="pr-logo-item">256-bit SSL</div>
+      <div class="pr-logo-sep"></div>
+      <div class="pr-logo-item">Cancel anytime</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let annual=true;
+function toggleBilling(){
+  annual=!annual;
+  const knob=document.getElementById('tog-knob');
+  const tog=document.getElementById('tog');
+  knob.style.left=annual?'3px':'21px';
+  tog.style.background=annual?'rgba(200,169,110,.2)':'rgba(255,255,255,.08)';
+  document.getElementById('mo-price').textContent=annual?'18':'18';
+  document.getElementById('an-price').textContent=annual?'13':'18';
+  document.getElementById('annual-total').textContent=annual?'156':'216';
+  document.getElementById('ppt').textContent=annual?'12':'12';
+}
+toggleBilling();
+</script>

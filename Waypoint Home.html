@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Waypoint — Plan Less. Experience More.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=Outfit:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #080808;
+    --near-black: #0e0e0e;
+    --surface: #111111;
+    --border: rgba(255,255,255,0.07);
+    --white: #ffffff;
+    --cream: #f0ebe0;
+    --gold: #c8a96e;
+    --gold-dim: rgba(200,169,110,0.15);
+    --muted: rgba(255,255,255,0.38);
+    --text: rgba(255,255,255,0.82);
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'Outfit', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  .cursor {
+    position: fixed;
+    width: 8px; height: 8px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease;
+    transform: translate(-50%, -50%);
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid rgba(200,169,110,0.4);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all 0.08s ease;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 48px;
+    background: linear-gradient(to bottom, rgba(8,8,8,0.9) 0%, transparent 100%);
+  }
+  .nav-logo {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    color: var(--white);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--gold); }
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 11px;
+    font-weight: 300;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--white); }
+  .nav-cta {
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid rgba(200,169,110,0.4);
+    padding: 10px 24px;
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+  .nav-cta:hover {
+    background: var(--gold);
+    color: var(--black);
+  }
+
+  /* ── SECTION 1: HERO — AIRPLANE WINDOW ── */
+  .scene {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .scene-1 {
+    background: var(--black);
+  }
+
+  /* Airplane window frame */
+  .window-frame {
+    position: absolute;
+    width: 480px;
+    height: 560px;
+    border-radius: 240px / 280px;
+    border: 3px solid rgba(255,255,255,0.06);
+    box-shadow:
+      0 0 0 20px rgba(255,255,255,0.02),
+      0 0 0 40px rgba(255,255,255,0.015),
+      inset 0 0 80px rgba(0,0,0,0.8),
+      0 40px 120px rgba(0,0,0,0.9);
+    overflow: hidden;
+    z-index: 2;
+  }
+
+  /* Sky & clouds inside window */
+  .window-sky {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      #0a1628 0%,
+      #1a2d4a 25%,
+      #2d4a6b 45%,
+      #4a7090 55%,
+      #8fafc4 70%,
+      #c8d8e8 85%,
+      #e8eff5 100%
+    );
+    animation: skyShift 8s ease-in-out infinite alternate;
+  }
+
+  @keyframes skyShift {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-30px); }
+  }
+
+  /* Cloud layers */
+  .cloud-layer {
+    position: absolute;
+    width: 200%;
+    height: 100%;
+    top: 0;
+  }
+  .cloud {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.85);
+    filter: blur(18px);
+  }
+  .cloud-layer-1 {
+    animation: cloudDrift1 18s linear infinite;
+  }
+  .cloud-layer-2 {
+    animation: cloudDrift2 24s linear infinite;
+    opacity: 0.6;
+  }
+  .cloud-layer-3 {
+    animation: cloudDrift3 30s linear infinite;
+    opacity: 0.4;
+  }
+
+  @keyframes cloudDrift1 { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @keyframes cloudDrift2 { from { transform: translateX(-10%); } to { transform: translateX(-60%); } }
+  @keyframes cloudDrift3 { from { transform: translateX(-5%); } to { transform: translateX(-55%); } }
+
+  /* Wing element */
+  .wing {
+    position: absolute;
+    bottom: -40px;
+    left: -60px;
+    width: 340px;
+    height: 180px;
+    background: linear-gradient(135deg, #c8c8c8 0%, #a0a0a0 40%, #787878 100%);
+    transform: perspective(300px) rotateX(25deg) skewX(-8deg);
+    border-radius: 0 60px 20px 0;
+    box-shadow: 0 -20px 60px rgba(0,0,0,0.5);
+    z-index: 3;
+  }
+  .wing::after {
+    content: '';
+    position: absolute;
+    top: 10px; left: 20px; right: 20px; bottom: 10px;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    border-radius: 0 40px 0 0;
+  }
+
+  /* Seat reflection */
+  .seat-reflection {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 35%;
+    background: linear-gradient(to top, rgba(20,20,20,0.95) 0%, transparent 100%);
+    z-index: 4;
+  }
+
+  /* Window glare */
+  .glare {
+    position: absolute;
+    top: 8%; left: 8%;
+    width: 30%; height: 45%;
+    background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 60%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  /* Cabin interior surround */
+  .cabin-surround {
+    position: absolute;
+    inset: -2px;
+    border-radius: 240px / 280px;
+    background: transparent;
+    border: 60px solid #0e0e0e;
+    z-index: 6;
+  }
+  .cabin-trim {
+    position: absolute;
+    inset: 55px;
+    border-radius: 200px / 240px;
+    border: 2px solid rgba(255,255,255,0.05);
+    z-index: 7;
+  }
+
+  /* Scene 1 text */
+  .scene-1-text {
+    position: absolute;
+    bottom: 14%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 10;
+    width: 100%;
+    animation: fadeUp 1.2s ease 0.5s both;
+  }
+  .scene-tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+    display: block;
+  }
+  .scene-1-text h1 {
+    font-family: var(--font-display);
+    font-size: clamp(42px, 6vw, 72px);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--white);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateX(-50%) translateY(30px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+
+  /* Scroll indicator */
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    z-index: 10;
+    animation: fadeUp 1s ease 1.5s both;
+  }
+  .scroll-hint span {
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: var(--font-mono);
+  }
+  .scroll-line {
+    width: 1px;
+    height: 48px;
+    background: linear-gradient(to bottom, rgba(200,169,110,0.6), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.1); }
+  }
+
+  /* ── SECTION 2: CHAOS ── */
+  .scene-2 {
+    background: var(--near-black);
+    flex-direction: column;
+    gap: 0;
+    padding: 0;
+  }
+
+  .chaos-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Phone mockup */
+  .phone-mockup {
+    position: relative;
+    width: 300px;
+    height: 580px;
+    background: #111;
+    border-radius: 40px;
+    border: 2px solid rgba(255,255,255,0.1);
+    box-shadow:
+      0 0 0 8px rgba(255,255,255,0.03),
+      0 60px 120px rgba(0,0,0,0.8),
+      inset 0 0 30px rgba(0,0,0,0.5);
+    overflow: hidden;
+    z-index: 5;
+  }
+  .phone-screen {
+    position: absolute;
+    inset: 12px;
+    border-radius: 30px;
+    background: #0a0a0a;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .phone-status {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 20px 6px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    font-family: var(--font-mono);
+  }
+  .chat-header {
+    padding: 10px 16px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .chat-header-title {
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--white);
+    margin-bottom: 2px;
+  }
+  .chat-header-sub {
+    font-size: 10px;
+    color: rgba(255,255,255,0.35);
+    font-family: var(--font-mono);
+  }
+  .chat-messages {
+    flex: 1;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow: hidden;
+  }
+
+  .msg {
+    padding: 8px 12px;
+    border-radius: 14px;
+    font-size: 12px;
+    line-height: 1.4;
+    max-width: 85%;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: msgPop 0.4s ease forwards;
+  }
+  .msg-left {
+    background: #1e1e1e;
+    color: rgba(255,255,255,0.8);
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+  }
+  .msg-right {
+    background: #2563eb;
+    color: rgba(255,255,255,0.9);
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+  }
+  .msg-stress {
+    background: #c0392b;
+    color: white;
+  }
+  .msg-name {
+    font-size: 9px;
+    font-family: var(--font-mono);
+    color: rgba(255,255,255,0.3);
+    margin-bottom: 3px;
+  }
+
+  @keyframes msgPop {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .msg:nth-child(1) { animation-delay: 0.2s; }
+  .msg:nth-child(2) { animation-delay: 0.7s; }
+  .msg:nth-child(3) { animation-delay: 1.2s; }
+  .msg:nth-child(4) { animation-delay: 1.7s; }
+  .msg:nth-child(5) { animation-delay: 2.2s; }
+  .msg:nth-child(6) { animation-delay: 2.7s; }
+  .msg:nth-child(7) { animation-delay: 3.0s; }
+  .msg:nth-child(8) { animation-delay: 3.4s; }
+
+  /* Floating stress labels */
+  .chaos-label {
+    position: absolute;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border: 1px solid;
+    opacity: 0;
+    animation: floatIn 0.5s ease forwards;
+  }
+  .chaos-label-1 { top: 18%; left: 8%; color: #e74c3c; border-color: rgba(231,76,60,0.3); background: rgba(231,76,60,0.06); animation-delay: 1s; transform: rotate(-3deg); }
+  .chaos-label-2 { top: 28%; right: 6%; color: #f39c12; border-color: rgba(243,156,18,0.3); background: rgba(243,156,18,0.06); animation-delay: 1.8s; transform: rotate(2deg); }
+  .chaos-label-3 { bottom: 30%; left: 6%; color: #e74c3c; border-color: rgba(231,76,60,0.3); background: rgba(231,76,60,0.06); animation-delay: 2.5s; transform: rotate(1deg); }
+  .chaos-label-4 { bottom: 20%; right: 7%; color: #f39c12; border-color: rgba(243,156,18,0.3); background: rgba(243,156,18,0.06); animation-delay: 3.2s; transform: rotate(-2deg); }
+
+  @keyframes floatIn {
+    from { opacity: 0; transform: translateY(8px) rotate(var(--r, 0deg)); }
+    to { opacity: 1; transform: translateY(0) rotate(var(--r, 0deg)); }
+  }
+
+  .scene-2-text {
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 10;
+  }
+  .scene-2-text p {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 300;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* ── SECTION 3: CAPPADOCIA ── */
+  .scene-3 {
+    background: var(--black);
+    overflow: hidden;
+  }
+
+  /* Sunrise sky */
+  .cappadocia-sky {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      #0d0510 0%,
+      #1a0820 8%,
+      #2d1025 15%,
+      #5c2030 25%,
+      #8c3828 35%,
+      #c4622a 48%,
+      #e8943c 58%,
+      #f0b84a 65%,
+      #f8d870 72%,
+      #fce890 78%,
+      #e8d8a0 85%,
+      #c8c8b0 100%
+    );
+  }
+
+  /* Landscape silhouette */
+  .landscape {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 45%;
+    z-index: 2;
+  }
+
+  /* SVG rock formations */
+  .rocks-far {
+    position: absolute;
+    bottom: 30%;
+    left: 0; right: 0;
+    height: 60%;
+    opacity: 0.55;
+  }
+  .rocks-mid {
+    position: absolute;
+    bottom: 15%;
+    left: 0; right: 0;
+    height: 70%;
+    opacity: 0.75;
+  }
+  .rocks-near {
+    position: absolute;
+    bottom: 0;
+    left: 0; right: 0;
+    height: 35%;
+    background: #0a0507;
+    clip-path: polygon(
+      0% 100%, 0% 60%, 3% 45%, 5% 60%, 7% 30%, 9% 55%,
+      11% 20%, 13% 50%, 15% 35%, 17% 55%, 19% 15%, 21% 45%,
+      23% 25%, 25% 50%, 27% 35%, 29% 55%, 31% 20%, 33% 45%,
+      35% 30%, 37% 50%, 39% 18%, 41% 45%, 43% 28%, 45% 52%,
+      47% 22%, 49% 48%, 51% 32%, 53% 55%, 55% 20%, 57% 48%,
+      59% 35%, 61% 52%, 63% 22%, 65% 48%, 67% 30%, 69% 55%,
+      71% 18%, 73% 45%, 75% 28%, 77% 52%, 79% 22%, 81% 48%,
+      83% 35%, 85% 55%, 87% 20%, 89% 48%, 91% 30%, 93% 52%,
+      95% 18%, 97% 45%, 100% 55%, 100% 100%
+    );
+  }
+
+  /* Balloons */
+  .balloon-group {
+    position: absolute;
+    top: 18%;
+    left: 0; right: 0;
+    z-index: 3;
+    display: flex;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .balloon {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .balloon-body {
+    border-radius: 50%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .balloon-body::after {
+    content: '';
+    position: absolute;
+    top: 12%; left: 15%;
+    width: 28%; height: 35%;
+    background: rgba(255,255,255,0.25);
+    border-radius: 50%;
+    transform: rotate(-25deg);
+  }
+
+  .balloon-rope {
+    width: 1px;
+    background: rgba(0,0,0,0.4);
+  }
+
+  .balloon-basket {
+    background: #8B6914;
+    border-radius: 2px;
+  }
+
+  /* Individual balloons */
+  .b1 { transform: translateY(0px); animation: balloonFloat 6s ease-in-out infinite; }
+  .b2 { transform: translateY(-15px); animation: balloonFloat 8s ease-in-out infinite 1s; }
+  .b3 { transform: translateY(8px); animation: balloonFloat 7s ease-in-out infinite 0.5s; }
+  .b4 { transform: translateY(-20px); animation: balloonFloat 9s ease-in-out infinite 2s; }
+  .b5 { transform: translateY(5px); animation: balloonFloat 6.5s ease-in-out infinite 1.5s; }
+
+  @keyframes balloonFloat {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    33% { transform: translateY(-12px) rotate(1.5deg); }
+    66% { transform: translateY(6px) rotate(-1deg); }
+  }
+
+  /* Hot air glow under balloons */
+  .balloon-glow {
+    position: absolute;
+    bottom: 22%; left: 35%; right: 35%;
+    height: 80px;
+    background: radial-gradient(ellipse, rgba(255,160,50,0.35) 0%, transparent 70%);
+    filter: blur(20px);
+    z-index: 2;
+  }
+
+  /* Ground glow / atmospheric haze */
+  .horizon-glow {
+    position: absolute;
+    bottom: 40%; left: 20%; right: 20%;
+    height: 120px;
+    background: radial-gradient(ellipse, rgba(240,140,40,0.3) 0%, transparent 70%);
+    filter: blur(40px);
+    z-index: 1;
+  }
+
+  /* Stars (visible at top) */
+  .stars {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 25%;
+    z-index: 1;
+  }
+  .star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 3s ease-in-out infinite;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.8; }
+  }
+
+  /* Scene 3 overlay text */
+  .scene-3-content {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding-bottom: 8vh;
+  }
+
+  .scene-3-content .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+    display: block;
+    text-shadow: 0 0 20px rgba(200,169,110,0.5);
+  }
+
+  .scene-3-content h2 {
+    font-family: var(--font-display);
+    font-size: clamp(52px, 8vw, 96px);
+    font-weight: 300;
+    color: var(--white);
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    text-shadow: 0 4px 40px rgba(0,0,0,0.6);
+    margin-bottom: 12px;
+  }
+
+  .scene-3-content h2 em {
+    font-style: italic;
+    color: var(--cream);
+  }
+
+  .scene-3-content p {
+    font-size: 14px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 0.5px;
+    margin-bottom: 48px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+  }
+
+  /* CTA Button */
+  .cta-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--gold);
+    color: var(--black);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    padding: 18px 40px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.15);
+    transform: translateX(-100%);
+    transition: transform 0.4s ease;
+  }
+  .cta-primary:hover::before { transform: translateX(0); }
+  .cta-primary:hover { transform: translateY(-2px); box-shadow: 0 20px 60px rgba(200,169,110,0.3); }
+
+  .cta-arrow {
+    width: 20px; height: 1px;
+    background: var(--black);
+    position: relative;
+    transition: width 0.3s;
+  }
+  .cta-arrow::after {
+    content: '';
+    position: absolute;
+    right: 0; top: -3px;
+    width: 7px; height: 7px;
+    border-right: 1.5px solid var(--black);
+    border-top: 1.5px solid var(--black);
+    transform: rotate(45deg);
+  }
+  .cta-primary:hover .cta-arrow { width: 32px; }
+
+  /* ── SECTION 4: ITINERARY PREVIEW ── */
+  .scene-4 {
+    background: var(--near-black);
+    min-height: 100vh;
+    padding: 120px 48px;
+    flex-direction: column;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .section-intro {
+    text-align: center;
+    max-width: 600px;
+  }
+  .section-intro .label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+    display: block;
+  }
+  .section-intro h2 {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 5vw, 58px);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--white);
+    line-height: 1.15;
+    margin-bottom: 20px;
+  }
+  .section-intro p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  /* Itinerary UI mockup */
+  .itinerary-ui {
+    width: 100%;
+    max-width: 900px;
+    background: #0e0e0e;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 40px 120px rgba(0,0,0,0.7);
+  }
+
+  .ui-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    background: #0a0a0a;
+  }
+  .ui-dots { display: flex; gap: 7px; }
+  .ui-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .ui-dot:nth-child(1) { background: #c0392b; }
+  .ui-dot:nth-child(2) { background: #f39c12; }
+  .ui-dot:nth-child(3) { background: #27ae60; }
+  .ui-topbar-title {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .ui-topbar-actions { display: flex; gap: 12px; }
+  .ui-action {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .ui-action:hover { color: var(--white); border-color: rgba(255,255,255,0.2); }
+  .ui-action.primary { color: var(--gold); border-color: rgba(200,169,110,0.3); }
+
+  .ui-body {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    min-height: 520px;
+  }
+
+  /* Sidebar */
+  .ui-sidebar {
+    border-right: 1px solid var(--border);
+    padding: 24px 0;
+  }
+  .sidebar-trip-name {
+    padding: 0 20px 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+  .sidebar-trip-name .trip-label {
+    font-family: var(--font-mono);
+    font-size: 8px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+    display: block;
+  }
+  .sidebar-trip-name .trip-title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--white);
+  }
+  .sidebar-trip-name .trip-meta {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .sidebar-days { padding: 0 12px; }
+  .day-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-bottom: 2px;
+  }
+  .day-item:hover { background: rgba(255,255,255,0.04); }
+  .day-item.active { background: rgba(200,169,110,0.08); }
+  .day-num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted);
+    width: 28px;
+  }
+  .day-item.active .day-num { color: var(--gold); }
+  .day-info { flex: 1; }
+  .day-city { font-size: 12px; color: rgba(255,255,255,0.75); }
+  .day-item.active .day-city { color: var(--white); }
+  .day-date { font-size: 10px; color: var(--muted); font-family: var(--font-mono); }
+
+  /* Main content */
+  .ui-main { padding: 28px; overflow: hidden; }
+
+  .ui-day-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .ui-day-title {
+    font-family: var(--font-display);
+    font-size: 30px;
+    font-weight: 300;
+    color: var(--white);
+    font-style: italic;
+  }
+  .ui-day-date {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* Activity cards */
+  .activity-timeline { display: flex; flex-direction: column; gap: 12px; }
+
+  .activity-card {
+    display: grid;
+    grid-template-columns: 60px 1fr auto;
+    gap: 16px;
+    align-items: start;
+    padding: 16px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    transition: all 0.25s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .activity-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+  }
+  .activity-card.type-hotel::before { background: var(--gold); }
+  .activity-card.type-food::before { background: #e74c3c; }
+  .activity-card.type-activity::before { background: #3498db; }
+
+  .activity-card:hover {
+    background: rgba(255,255,255,0.04);
+    border-color: rgba(255,255,255,0.12);
+    transform: translateX(3px);
+  }
+
+  .activity-time {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted);
+    padding-top: 2px;
+    text-align: right;
+    line-height: 1.4;
+  }
+
+  .activity-body { flex: 1; }
+  .activity-name { font-size: 13px; font-weight: 400; color: var(--white); margin-bottom: 4px; }
+  .activity-sub { font-size: 11px; color: var(--muted); line-height: 1.5; }
+  .activity-tags { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+  .activity-tag {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 2px;
+  }
+  .activity-tag.gold { border-color: rgba(200,169,110,0.3); color: var(--gold); }
+
+  .activity-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-end;
+  }
+  .book-btn {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    background: var(--gold);
+    color: var(--black);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .book-btn:hover { opacity: 0.85; }
+  .thumb-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 5px 8px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .thumb-btn:hover { border-color: rgba(231,76,60,0.4); color: #e74c3c; }
+
+  /* ── SECTION 5: FEATURES STRIP ── */
+  .scene-5 {
+    background: var(--black);
+    min-height: auto;
+    height: auto;
+    padding: 100px 48px;
+    flex-direction: column;
+    gap: 64px;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    width: 100%;
+    max-width: 1000px;
+    border: 1px solid var(--border);
+  }
+  .feature-cell {
+    background: var(--black);
+    padding: 40px 36px;
+    transition: background 0.3s;
+  }
+  .feature-cell:hover { background: rgba(255,255,255,0.02); }
+  .feature-num {
+    font-family: var(--font-display);
+    font-size: 48px;
+    font-weight: 300;
+    color: var(--gold);
+    opacity: 0.25;
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+  .feature-title {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--white);
+    margin-bottom: 12px;
+    letter-spacing: 0.3px;
+  }
+  .feature-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--near-black);
+    border-top: 1px solid var(--border);
+    padding: 60px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  .footer-brand {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--white);
+  }
+  .footer-brand span { color: var(--gold); }
+  .footer-copy {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .footer-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+  .footer-links a {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .footer-links a:hover { color: var(--gold); }
+
+  /* Noise overlay for grain texture */
+  .noise {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 128px;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    nav { padding: 20px 24px; }
+    .nav-links { display: none; }
+    .scene-4 { padding: 80px 24px; }
+    .ui-body { grid-template-columns: 1fr; }
+    .ui-sidebar { display: none; }
+    .features-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Grain texture -->
+<div class="noise"></div>
+
+<!-- Custom cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Way<span>.</span>point</a>
+  <ul class="nav-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+  </ul>
+  <a href="#" class="nav-cta">Plan a trip</a>
+</nav>
+
+<!-- SCENE 1: AIRPLANE WINDOW -->
+<section class="scene scene-1">
+
+  <div class="window-frame">
+    <!-- Sky inside window -->
+    <div class="window-sky"></div>
+
+    <!-- Cloud layers -->
+    <div class="cloud-layer cloud-layer-1">
+      <div class="cloud" style="width:160px;height:60px;top:55%;left:10%"></div>
+      <div class="cloud" style="width:220px;height:80px;top:62%;left:40%"></div>
+      <div class="cloud" style="width:140px;height:50px;top:48%;left:75%"></div>
+      <div class="cloud" style="width:180px;height:65px;top:70%;left:20%"></div>
+      <div class="cloud" style="width:200px;height:75px;top:58%;left:60%"></div>
+      <div class="cloud" style="width:160px;height:60px;top:55%;left:110%"></div>
+      <div class="cloud" style="width:220px;height:80px;top:62%;left:140%"></div>
+      <div class="cloud" style="width:140px;height:50px;top:48%;left:175%"></div>
+      <div class="cloud" style="width:180px;height:65px;top:70%;left:120%"></div>
+    </div>
+    <div class="cloud-layer cloud-layer-2">
+      <div class="cloud" style="width:280px;height:100px;top:65%;left:5%;filter:blur(28px)"></div>
+      <div class="cloud" style="width:320px;height:110px;top:72%;left:45%;filter:blur(24px)"></div>
+      <div class="cloud" style="width:250px;height:90px;top:58%;left:80%;filter:blur(22px)"></div>
+      <div class="cloud" style="width:280px;height:100px;top:65%;left:105%;filter:blur(28px)"></div>
+      <div class="cloud" style="width:320px;height:110px;top:72%;left:145%;filter:blur(24px)"></div>
+    </div>
+    <div class="cloud-layer cloud-layer-3">
+      <div class="cloud" style="width:400px;height:140px;top:75%;left:0%;filter:blur(40px);opacity:0.3"></div>
+      <div class="cloud" style="width:360px;height:130px;top:80%;left:50%;filter:blur(35px);opacity:0.3"></div>
+      <div class="cloud" style="width:400px;height:140px;top:75%;left:100%;filter:blur(40px);opacity:0.3"></div>
+    </div>
+
+    <!-- Wing -->
+    <div class="wing"></div>
+    <!-- Seat reflection -->
+    <div class="seat-reflection"></div>
+    <!-- Glare -->
+    <div class="glare"></div>
+    <!-- Frame overlay -->
+    <div class="cabin-surround"></div>
+    <div class="cabin-trim"></div>
+  </div>
+
+  <div class="scene-1-text">
+    <span class="scene-tag">A different kind of travel app</span>
+    <h1>Planning a trip<br>shouldn't feel like this.</h1>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- SCENE 2: CHAOS / GROUP CHAT -->
+<section class="scene scene-2">
+  <div class="chaos-container">
+    <!-- Stress labels -->
+    <div class="chaos-label chaos-label-1">No clear plan</div>
+    <div class="chaos-label chaos-label-2">12 group chats</div>
+    <div class="chaos-label chaos-label-3">Who booked what?</div>
+    <div class="chaos-label chaos-label-4">3 spreadsheets</div>
+
+    <!-- Phone mockup -->
+    <div class="phone-mockup">
+      <div class="phone-screen">
+        <div class="phone-status">
+          <span>9:41</span>
+          <span>●●●</span>
+        </div>
+        <div class="chat-header">
+          <div class="chat-header-title">🇹🇷 Turkey Trip 2025</div>
+          <div class="chat-header-sub">8 members · Group chat</div>
+        </div>
+        <div class="chat-messages">
+          <div class="msg msg-left">
+            <div class="msg-name">Sarah</div>
+            What's the itinerary??
+          </div>
+          <div class="msg msg-right">
+            Did anyone book the hotel yet
+          </div>
+          <div class="msg msg-left">
+            <div class="msg-name">Jake</div>
+            I thought you were doing that??
+          </div>
+          <div class="msg msg-left msg-stress">
+            <div class="msg-name">Emma</div>
+            This is so stressful 😭
+          </div>
+          <div class="msg msg-right">
+            Can we do dinner at 8? I can't eat gluten btw
+          </div>
+          <div class="msg msg-left">
+            <div class="msg-name">Sarah</div>
+            Wait what are we even doing Day 1
+          </div>
+          <div class="msg msg-left">
+            <div class="msg-name">Tom</div>
+            Someone make a spreadsheet pls
+          </div>
+          <div class="msg msg-right">
+            I'm on a different flight 🙃
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene-2-text">
+    <p>There's a better way.</p>
+  </div>
+</section>
+
+<!-- SCENE 3: CAPPADOCIA — THE ANSWER -->
+<section class="scene scene-3">
+  <!-- Sky -->
+  <div class="cappadocia-sky"></div>
+
+  <!-- Stars -->
+  <div class="stars" id="stars"></div>
+
+  <!-- Atmospheric elements -->
+  <div class="horizon-glow"></div>
+  <div class="balloon-glow"></div>
+
+  <!-- Rock formations (SVG) -->
+  <div class="landscape">
+    <svg class="rocks-far" viewBox="0 0 1440 400" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,400 L0,280 Q30,200 60,240 Q90,180 120,220 Q150,140 180,190 Q210,160 240,200 Q270,120 300,170 Q330,150 360,185 Q390,110 420,165 Q450,140 480,175 Q510,100 540,155 Q570,130 600,168 Q630,105 660,158 Q690,135 720,172 Q750,108 780,160 Q810,138 840,172 Q870,112 900,162 Q930,140 960,175 Q990,108 1020,160 Q1050,138 1080,172 Q1110,115 1140,165 Q1170,145 1200,178 Q1230,118 1260,168 Q1290,148 1320,180 Q1350,125 1380,172 Q1410,155 1440,185 L1440,400 Z" fill="#120a0d" opacity="0.6"/>
+    </svg>
+    <svg class="rocks-mid" viewBox="0 0 1440 400" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,400 L0,320 Q20,260 40,295 Q60,230 80,268 Q100,200 120,248 Q145,215 165,252 Q185,170 210,228 Q235,195 255,240 Q275,160 300,218 Q325,188 348,232 Q368,150 395,212 Q420,180 442,225 Q462,148 490,208 Q515,178 538,222 Q558,145 585,205 Q610,175 633,220 Q653,142 680,202 Q705,172 728,216 Q748,140 775,200 Q800,170 823,215 Q843,138 870,198 Q895,168 918,213 Q938,136 965,196 Q990,166 1013,211 Q1033,134 1060,194 Q1085,164 1108,209 Q1128,132 1155,192 Q1180,162 1203,208 Q1223,130 1250,190 Q1275,162 1298,206 Q1318,132 1345,190 Q1370,162 1393,206 Q1413,135 1440,192 L1440,400 Z" fill="#0d0609" opacity="0.85"/>
+    </svg>
+    <div class="rocks-near"></div>
+  </div>
+
+  <!-- Balloons -->
+  <div class="balloon-group">
+    <!-- Balloon 1 -->
+    <div class="balloon b1" style="margin-right: -10px; z-index: 3;">
+      <div class="balloon-body" style="width:52px;height:64px;background:linear-gradient(135deg,#c0392b,#922b21);">
+        <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:repeating-linear-gradient(45deg,transparent,transparent 6px,rgba(0,0,0,0.12) 6px,rgba(0,0,0,0.12) 12px);border-radius:50%;"></div>
+      </div>
+      <div class="balloon-rope" style="height:22px;"></div>
+      <div class="balloon-basket" style="width:20px;height:12px;"></div>
+    </div>
+    <!-- Balloon 2 — hero -->
+    <div class="balloon b2" style="z-index: 5;">
+      <div class="balloon-body" style="width:80px;height:96px;background:linear-gradient(135deg,#e8943c,#c8943a,#a07428);">
+        <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:repeating-linear-gradient(30deg,transparent,transparent 10px,rgba(0,0,0,0.1) 10px,rgba(0,0,0,0.1) 20px);border-radius:50%;"></div>
+      </div>
+      <div class="balloon-rope" style="height:30px;"></div>
+      <div class="balloon-basket" style="width:28px;height:16px;"></div>
+    </div>
+    <!-- Balloon 3 -->
+    <div class="balloon b3" style="margin-left: -8px; z-index: 3;">
+      <div class="balloon-body" style="width:58px;height:72px;background:linear-gradient(135deg,#2980b9,#1a5276);">
+        <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:repeating-linear-gradient(60deg,transparent,transparent 8px,rgba(255,255,255,0.06) 8px,rgba(255,255,255,0.06) 16px);border-radius:50%;"></div>
+      </div>
+      <div class="balloon-rope" style="height:24px;"></div>
+      <div class="balloon-basket" style="width:22px;height:13px;"></div>
+    </div>
+    <!-- Balloon 4 -->
+    <div class="balloon b4" style="margin-left: 20px; z-index: 2;">
+      <div class="balloon-body" style="width:44px;height:54px;background:linear-gradient(135deg,#27ae60,#1a7a42);">
+      </div>
+      <div class="balloon-rope" style="height:18px;"></div>
+      <div class="balloon-basket" style="width:16px;height:10px;"></div>
+    </div>
+    <!-- Balloon 5 -->
+    <div class="balloon b5" style="margin-left: 16px; z-index: 2;">
+      <div class="balloon-body" style="width:50px;height:62px;background:linear-gradient(135deg,#8e44ad,#6c3483);">
+      </div>
+      <div class="balloon-rope" style="height:20px;"></div>
+      <div class="balloon-basket" style="width:18px;height:11px;"></div>
+    </div>
+  </div>
+
+  <!-- Text -->
+  <div class="scene-3-content">
+    <span class="eyebrow">Introducing Waypoint</span>
+    <h2>This is what<br>we had <em>in mind.</em></h2>
+    <p>AI-powered trip planning for the way groups actually travel.</p>
+    <a href="#" class="cta-primary">
+      Plan your trip
+      <div class="cta-arrow"></div>
+    </a>
+  </div>
+</section>
+
+<!-- SCENE 4: ITINERARY UI DEMO -->
+<section class="scene scene-4" id="how">
+  <div class="section-intro">
+    <span class="label">The product</span>
+    <h2>Your personal travel<br>intelligence, built in.</h2>
+    <p>Waypoint generates a full itinerary from a 10-question flow. Hotels, restaurants, activities — curated, personalised, and ready to tweak.</p>
+  </div>
+
+  <!-- Itinerary UI Mockup -->
+  <div class="itinerary-ui">
+    <div class="ui-topbar">
+      <div class="ui-dots">
+        <div class="ui-dot"></div>
+        <div class="ui-dot"></div>
+        <div class="ui-dot"></div>
+      </div>
+      <div class="ui-topbar-title">Waypoint — Istanbul & Cappadocia</div>
+      <div class="ui-topbar-actions">
+        <div class="ui-action">Export PDF</div>
+        <div class="ui-action">Share</div>
+        <div class="ui-action primary">Invite</div>
+      </div>
+    </div>
+
+    <div class="ui-body">
+      <!-- Sidebar -->
+      <div class="ui-sidebar">
+        <div class="sidebar-trip-name">
+          <span class="trip-label">Your trip</span>
+          <div class="trip-title">Turkey, 2025</div>
+          <div class="trip-meta">8 nights · 4 travellers</div>
+        </div>
+        <div class="sidebar-days">
+          <div class="day-item">
+            <div class="day-num">01</div>
+            <div class="day-info">
+              <div class="day-city">Istanbul</div>
+              <div class="day-date">Jun 14</div>
+            </div>
+          </div>
+          <div class="day-item active">
+            <div class="day-num">02</div>
+            <div class="day-info">
+              <div class="day-city">Istanbul</div>
+              <div class="day-date">Jun 15</div>
+            </div>
+          </div>
+          <div class="day-item">
+            <div class="day-num">03</div>
+            <div class="day-info">
+              <div class="day-city">Istanbul</div>
+              <div class="day-date">Jun 16</div>
+            </div>
+          </div>
+          <div class="day-item">
+            <div class="day-num">04</div>
+            <div class="day-info">
+              <div class="day-city">Cappadocia</div>
+              <div class="day-date">Jun 17</div>
+            </div>
+          </div>
+          <div class="day-item">
+            <div class="day-num">05</div>
+            <div class="day-info">
+              <div class="day-city">Cappadocia</div>
+              <div class="day-date">Jun 18</div>
+            </div>
+          </div>
+          <div class="day-item">
+            <div class="day-num">06</div>
+            <div class="day-info">
+              <div class="day-city">Cappadocia</div>
+              <div class="day-date">Jun 19</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main -->
+      <div class="ui-main">
+        <div class="ui-day-header">
+          <div class="ui-day-title">Day 2 — Istanbul</div>
+          <div class="ui-day-date">Sunday, Jun 15</div>
+        </div>
+
+        <div class="activity-timeline">
+
+          <!-- Hotel card -->
+          <div class="activity-card type-hotel">
+            <div class="activity-time">All day<br>check-in<br>3PM</div>
+            <div class="activity-body">
+              <div class="activity-name">Vault Karakoy, The House Hotel</div>
+              <div class="activity-sub">Boutique hotel in Karaköy · 4.8★ on Google · Sea views available</div>
+              <div class="activity-tags">
+                <span class="activity-tag gold">Comfort tier</span>
+                <span class="activity-tag">Rooftop bar</span>
+                <span class="activity-tag">City centre</span>
+              </div>
+            </div>
+            <div class="activity-actions">
+              <button class="book-btn">View Rooms</button>
+              <button class="thumb-btn">👎</button>
+            </div>
+          </div>
+
+          <!-- Activity card -->
+          <div class="activity-card type-activity">
+            <div class="activity-time">9:00 AM<br>3 hrs</div>
+            <div class="activity-body">
+              <div class="activity-name">Bosphorus Sunrise Boat Tour</div>
+              <div class="activity-sub">Private guided cruise · Includes breakfast · Pick-up from hotel</div>
+              <div class="activity-tags">
+                <span class="activity-tag">Viator certified</span>
+                <span class="activity-tag">Group friendly</span>
+              </div>
+            </div>
+            <div class="activity-actions">
+              <button class="book-btn">Explore</button>
+              <button class="thumb-btn">👎</button>
+            </div>
+          </div>
+
+          <!-- Food card -->
+          <div class="activity-card type-food">
+            <div class="activity-time">1:00 PM<br>Lunch</div>
+            <div class="activity-body">
+              <div class="activity-name">Karaköy Lokantası</div>
+              <div class="activity-sub">Modern Turkish cuisine · 4.6★ · Gluten-free options available</div>
+              <div class="activity-tags">
+                <span class="activity-tag">Dietary match</span>
+                <span class="activity-tag">Group table</span>
+              </div>
+            </div>
+            <div class="activity-actions">
+              <button class="book-btn">Reserve</button>
+              <button class="thumb-btn">👎</button>
+            </div>
+          </div>
+
+          <!-- Evening activity -->
+          <div class="activity-card type-activity">
+            <div class="activity-time">6:30 PM<br>Eve</div>
+            <div class="activity-body">
+              <div class="activity-name">Grand Bazaar & Spice Market Walk</div>
+              <div class="activity-sub">Self-guided with AI audio commentary · 2hr suggested route</div>
+              <div class="activity-tags">
+                <span class="activity-tag">Included</span>
+                <span class="activity-tag">First-timer pick</span>
+              </div>
+            </div>
+            <div class="activity-actions">
+              <button class="book-btn">View Route</button>
+              <button class="thumb-btn">👎</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCENE 5: FEATURES -->
+<section class="scene scene-5" id="features">
+  <div class="section-intro">
+    <span class="label">Built different</span>
+    <h2>Everything a group<br>needs. Nothing it doesn't.</h2>
+  </div>
+
+  <div class="features-grid">
+    <div class="feature-cell">
+      <div class="feature-num">01</div>
+      <div class="feature-title">AI Planning Engine</div>
+      <div class="feature-desc">10-question onboarding. Day-by-day itineraries. Hotels, restaurants, and activities — curated by Claude, validated by Google Places.</div>
+    </div>
+    <div class="feature-cell">
+      <div class="feature-num">02</div>
+      <div class="feature-title">Group Collaboration</div>
+      <div class="feature-desc">Invite your crew, vote on ideas, react to suggestions, split the cost. No spreadsheets. No group chats. One place.</div>
+    </div>
+    <div class="feature-cell">
+      <div class="feature-num">03</div>
+      <div class="feature-title">Cinematic Scroll Experience</div>
+      <div class="feature-desc">GSAP ScrollTrigger transitions. Full-bleed photography. An interface that feels as good as the trip you're planning.</div>
+    </div>
+    <div class="feature-cell">
+      <div class="feature-num">04</div>
+      <div class="feature-title">Smart Budget Estimator</div>
+      <div class="feature-desc">Per-member cost breakdown. Flight estimates from each traveller's home city. Seasonal pricing awareness built in.</div>
+    </div>
+    <div class="feature-cell">
+      <div class="feature-num">05</div>
+      <div class="feature-title">Book Through Partners</div>
+      <div class="feature-desc">Booking.com for hotels. Viator for activities. Affiliate CTAs on every card — visible on the free tier. Revenue from day one.</div>
+    </div>
+    <div class="feature-cell">
+      <div class="feature-num">06</div>
+      <div class="feature-title">Export Everything</div>
+      <div class="feature-desc">PDF. Word doc. Google Calendar. Apple Calendar. A shareable read-only link. Your trip, in whatever format you need it.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">Way<span>.</span>point</div>
+  <ul class="footer-links">
+    <li><a href="#">Features</a></li>
+    <li><a href="#">Pricing</a></li>
+    <li><a href="#">Privacy</a></li>
+  </ul>
+  <div class="footer-copy">© 2025 Waypoint · All rights reserved</div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const cursorRing = document.getElementById('cursorRing');
+  let mouseX = 0, mouseY = 0;
+  let ringX = 0, ringY = 0;
+
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    cursor.style.left = mouseX + 'px';
+    cursor.style.top = mouseY + 'px';
+  });
+
+  // Smooth ring follow
+  function animateRing() {
+    ringX += (mouseX - ringX) * 0.12;
+    ringY += (mouseY - ringY) * 0.12;
+    cursorRing.style.left = ringX + 'px';
+    cursorRing.style.top = ringY + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  // Cursor scale on hover
+  document.querySelectorAll('a, button, .activity-card, .feature-cell').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.transform = 'translate(-50%, -50%) scale(2.5)';
+      cursorRing.style.transform = 'translate(-50%, -50%) scale(1.5)';
+      cursorRing.style.borderColor = 'rgba(200,169,110,0.7)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+      cursorRing.style.transform = 'translate(-50%, -50%) scale(1)';
+      cursorRing.style.borderColor = 'rgba(200,169,110,0.4)';
+    });
+  });
+
+  // Generate stars
+  const starsContainer = document.getElementById('stars');
+  for (let i = 0; i < 60; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    const size = Math.random() * 2 + 0.5;
+    star.style.cssText = `
+      width: ${size}px;
+      height: ${size}px;
+      left: ${Math.random() * 100}%;
+      top: ${Math.random() * 100}%;
+      animation-delay: ${Math.random() * 4}s;
+      animation-duration: ${2 + Math.random() * 3}s;
+    `;
+    starsContainer.appendChild(star);
+  }
+
+  // Parallax on scroll
+  window.addEventListener('scroll', () => {
+    const scrolled = window.scrollY;
+    const windowFrame = document.querySelector('.window-frame');
+    if (windowFrame) {
+      windowFrame.style.transform = `translateY(${scrolled * 0.15}px)`;
+    }
+    const capSky = document.querySelector('.cappadocia-sky');
+    if (capSky) {
+      const scene3 = document.querySelector('.scene-3');
+      const rect = scene3.getBoundingClientRect();
+      capSky.style.transform = `translateY(${-rect.top * 0.2}px)`;
+    }
+  });
+
+  // Intersection observer for fade-ins
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.feature-cell, .activity-card').forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = `opacity 0.6s ease ${i * 0.08}s, transform 0.6s ease ${i * 0.08}s`;
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
